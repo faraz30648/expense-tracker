@@ -1,0 +1,9 @@
+const STORAGE_KEY = "expenseAppData";
+
+function getData() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { users: {} };
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
