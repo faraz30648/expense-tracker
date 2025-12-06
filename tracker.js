@@ -1,17 +1,22 @@
 const params = new URLSearchParams(window.location.search);
 const user = params.get("user");
 
+if (!user) {
+  alert("No user selected");
+  window.location.href = "index.html";
+}
+
 document.getElementById("userTitle").textContent = user;
+
 const list = document.getElementById("expenseList");
 const totalEl = document.getElementById("totalAmount");
-
 const form = document.getElementById("expenseForm");
 
 function render() {
   const data = getData();
   const expenses = data.users[user] || [];
-  list.innerHTML = "";
 
+  list.innerHTML = "";
   let total = 0;
 
   expenses.forEach((e, i) => {
@@ -22,18 +27,22 @@ function render() {
       <td>${e.name}</td>
       <td>₹${e.amount}</td>
       <td>${e.date}</td>
-      <td><button onclick="remove(${i})">✕</button></td>
+      <td>
+        <button onclick="removeExpense(${i})">✕</button>
+      </td>
     `;
     list.appendChild(row);
   });
 
-  totalEl.textContent = total;
+  totalEl.textContent = total.toFixed(2);
 }
 
-form.onsubmit = e => {
+form.addEventListener("submit", e => {
   e.preventDefault();
 
   const data = getData();
+  data.users[user] = data.users[user] || [];
+
   data.users[user].push({
     name: expenseName.value,
     amount: Number(expenseAmount.value),
@@ -43,11 +52,11 @@ form.onsubmit = e => {
   saveData(data);
   form.reset();
   render();
-};
+});
 
-function remove(i) {
+function removeExpense(index) {
   const data = getData();
-  data.users[user].splice(i, 1);
+  data.users[user].splice(index, 1);
   saveData(data);
   render();
 }
